@@ -29,7 +29,7 @@
   "author": "seyacat",
   "license": "MIT",
   "dependencies": {
-    "@dotrino/store": "^0.4.0"
+    "@dotrino/store": "0.4.0"
   },
   "repository": {
     "type": "git",
