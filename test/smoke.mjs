@@ -9,7 +9,7 @@ const html = `<!doctype html><html lang="en"><body>
 <dotrino-support id="auto" inline links='[{"label":"Ko-fi","href":"https://ko-fi.com/u"},{"href":"https://paypal.me/u"}]'></dotrino-support>
 <dotrino-support id="es" lang="es" href="https://ko-fi.com/u" no-trigger></dotrino-support>
 <dotrino-support id="coin" lang="es" href="https://ko-fi.com/dotrino"></dotrino-support>
-<dotrino-support id="bug" lang="es" href="https://ko-fi.com/dotrino" repo="dotrino/dotrino" discord="https://discord.gg/D648uq7cth"></dotrino-support>
+<dotrino-support id="bug" lang="es" href="https://ko-fi.com/dotrino" repo="imdotrino/dotrino-home" discord="https://discord.gg/D648uq7cth"></dotrino-support>
 <script type="module" src="/src/index.js"></script>
 </body></html>`
 
@@ -252,7 +252,7 @@ const expect = {
   eventFired: true,
   bugFlipperThree: true,
   bugFaceCount: 3,
-  bugLinkHref: 'https://github.com/imdotrino/dotrino/issues',
+  bugLinkHref: 'https://github.com/imdotrino/dotrino-home/issues',
   bugLinkTarget: 'noopener noreferrer',
   bugLabel: 'Reporta un error',
   noBugWhenUnset: true,
