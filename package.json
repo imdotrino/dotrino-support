@@ -1,6 +1,6 @@
 {
   "name": "@dotrino/support",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Web Component (custom element) de modal de soporte/donaciones reutilizable por cualquier app del ecosistema Dotrino. Autohosteado, sin JS de terceros ni cookies.",
   "type": "module",
   "main": "src/index.js",

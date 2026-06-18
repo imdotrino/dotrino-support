@@ -135,11 +135,11 @@ const STYLE = `
     border: 1px solid transparent;
   }
   .trigger.solid {
-    background: #3498db;
+    background: var(--ds-accent, #3498db);
     color: #fff;
     box-shadow: 0 2px 10px rgba(52, 152, 219, 0.35);
   }
-  .trigger.solid:hover { background: #2980b9; transform: translateY(-1px); }
+  .trigger.solid:hover { background: var(--ds-accent-press, #2980b9); transform: translateY(-1px); }
   .trigger.ghost {
     background: transparent;
     color: currentColor;
@@ -216,7 +216,7 @@ const STYLE = `
   /* Caras con icono (compartir / bug). El transform de rotación va inline
      porque depende de si hay 2 o 3 caras. */
   .face.icon {
-    background: #3498db;
+    background: var(--ds-accent, #3498db);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,7 +237,7 @@ const STYLE = `
     top: calc(100% + 8px);
     right: 0;
     z-index: 2147483000;
-    background: #3498db;
+    background: var(--ds-accent, #3498db);
     color: #fff;
     padding: 0.5rem 0.85rem;
     border-radius: 10px;
@@ -261,7 +261,7 @@ const STYLE = `
     right: 13px;
     border: 6px solid transparent;
     border-top: 0;
-    border-bottom-color: #3498db;
+    border-bottom-color: var(--ds-accent, #3498db);
   }
   @media (max-width: 480px) {
     .bubble { font-size: 0.8rem; padding: 0.4rem 0.7rem; }
@@ -278,14 +278,14 @@ const STYLE = `
     max-width: 100vw;
     max-height: 100vh;
     overflow: visible;
-    color: #fff;
+    color: var(--ds-modal-text, #fff);
   }
   .overlay::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(3px); }
 
   .modal {
-    background: #1f2c3a;
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--ds-modal-bg, #1f2c3a);
+    color: var(--ds-modal-text, #fff);
+    border: 1px solid var(--ds-modal-border, rgba(255, 255, 255, 0.12));
     border-radius: 16px;
     max-width: 420px;
     width: 100%;
@@ -305,16 +305,16 @@ const STYLE = `
     height: 2rem;
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--ds-modal-muted, rgba(255, 255, 255, 0.7));
     font-size: 1.4rem;
     line-height: 1;
     cursor: pointer;
     border-radius: 50%;
     transition: all 0.2s ease;
   }
-  .close:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .close:hover { background: var(--ds-modal-hover, rgba(255, 255, 255, 0.1)); color: var(--ds-modal-text, #fff); }
 
-  .heading { font-size: 1.4rem; font-weight: 700; margin: 0 0 1.1rem; color: #3498db; }
+  .heading { font-size: 1.4rem; font-weight: 700; margin: 0 0 1.1rem; color: var(--ds-accent, #3498db); }
   .message { font-size: 0.98rem; line-height: 1.6; margin: 0 0 1.5rem; opacity: 0.92; }
 
   .links { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
@@ -329,12 +329,12 @@ const STYLE = `
     font-size: 0.95rem;
     padding: 0.7rem 1.4rem;
     border-radius: 50px;
-    background: #3498db;
+    background: var(--ds-accent, #3498db);
     color: #fff;
     transition: all 0.25s ease;
     box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
   }
-  .link:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4); }
+  .link:hover { background: var(--ds-accent-press, #2980b9); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4); }
   .link-ico { display: inline-flex; width: 1.4rem; height: 1.4rem; }
   .link-ico img { width: 100%; height: 100%; display: block; object-fit: contain; }
 
@@ -342,7 +342,7 @@ const STYLE = `
   .share {
     margin-top: 1.5rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid var(--ds-modal-border, rgba(255, 255, 255, 0.12));
   }
   .share-heading {
     font-size: 0.95rem;
@@ -388,19 +388,19 @@ const STYLE = `
   .bug {
     margin-top: 1.25rem;
     padding-top: 1.1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid var(--ds-modal-border, rgba(255, 255, 255, 0.12));
   }
   .bug-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--ds-modal-muted, rgba(255, 255, 255, 0.7));
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
     transition: color 0.2s ease;
   }
-  .bug-link:hover { color: #fff; }
+  .bug-link:hover { color: var(--ds-modal-text, #fff); }
   .bug-ico {
     display: inline-flex;
     width: 1.15rem;
@@ -412,7 +412,7 @@ const STYLE = `
   .discord {
     margin-top: 1.25rem;
     padding-top: 1.1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid var(--ds-modal-border, rgba(255, 255, 255, 0.12));
   }
   .discord-link {
     display: inline-flex;
