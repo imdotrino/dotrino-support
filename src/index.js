@@ -28,6 +28,8 @@
  *     message     Cuerpo del modal (override)
  *     lang        'es' | 'en' | 'auto' (default 'auto')
  *     variant     'solid' (default) | 'ghost' — estilo del disparador
+ *     x-handle    Cuenta de X que se menciona al compartir en X ("vía @handle").
+ *                 Default '@imdotrino'. No cross-network: solo aplica a X.
  *   Métodos:    el.open(), el.close()
  *   Eventos:    'cc-support-open', 'cc-support-close' (bubbles, composed)
  */
@@ -598,9 +600,13 @@ class DotrinoSupport extends HTMLElement {
     const url = this._shareUrl
     const u = encodeURIComponent(url)
     const text = encodeURIComponent(this._shareText)
+    // Al compartir en X mencionamos NUESTRA cuenta de esa misma red ("vía @handle"),
+    // no cross-network. Override por proyecto con el atributo `x-handle`; default Dotrino.
+    const xHandle = (this.getAttribute('x-handle') || '@imdotrino').trim().replace(/^@*/, '@')
+    const xText = encodeURIComponent(`${this._shareText} vía ${xHandle}`)
     return [
       { key: 'whatsapp', href: `https://wa.me/?text=${text}%20${u}` },
-      { key: 'x', href: `https://twitter.com/intent/tweet?url=${u}&text=${text}` },
+      { key: 'x', href: `https://twitter.com/intent/tweet?url=${u}&text=${xText}` },
       { key: 'facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
       { key: 'instagram', href: null }, // copia al portapapeles
     ]
