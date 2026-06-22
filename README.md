@@ -1,5 +1,7 @@
 # @dotrino/support
 
+> **Parte del ecosistema [Dotrino](https://dotrino.com).** Misión: aplicaciones que resuelven problemas comunes, respetando tu privacidad — sin anuncios, sin cookies, sin rastreo de datos, sin vender tu identidad a nadie.
+
 Web Component (`<dotrino-support>`) con un **modal de soporte/donaciones**
 reutilizable por **cualquier app del ecosistema Dotrino**: las hechas en
 Vue 3 y las vanilla (HTML/JS), porque es un *custom element* estándar.
