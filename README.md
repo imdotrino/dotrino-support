@@ -93,6 +93,8 @@ import '@dotrino/support'
 | `repo`       | `usuario/repo` o URL del repo. Añade una cara de "bug" al flipper y una sección "Reporta un error" en el modal con enlace directo a los issues. |
 | `bug-href`   | URL completa a la página de issues (alternativa a `repo` si no sigue el patrón `…/issues`). |
 | `discord`    | URL de invitación a Discord (`https://discord.gg/…`). Añade una sección de comunidad al modal con enlace a Discord. |
+| `contact`    | Si está presente, muestra un botón **Contacto** (contorno) **arriba** de las donaciones. NO abre un enlace: **cierra el modal** y emite `cc-support-contact` para que la app haga lo suyo (p. ej. abrir su formulario de contacto). Desde 0.7.0. |
+| `contact-label` | Texto del botón de contacto (override). Default `"Contacto"` / `"Contact"` según idioma. |
 | `coin`       | URL de imagen para reemplazar la moneda por defecto. |
 | `no-bubble`  | Desactiva la burbuja de diálogo automática. |
 | `bubble-timeout` | Ms que la burbuja queda visible antes de ocultarse sola (default `6000`). |
@@ -114,6 +116,9 @@ GitHub Sponsors) o cae al texto por defecto del idioma.
 ### Eventos
 
 - `cc-support-open` y `cc-support-close` (`bubbles`, `composed`).
+- `cc-support-contact` (`bubbles`, `composed`) — se emite al pulsar el botón de
+  Contacto (solo con el atributo `contact`); el modal se cierra antes de emitirlo.
+  Ejemplo (Vue): `<dotrino-support contact @cc-support-contact="openContactForm" />`.
 
 ### Disparar desde tu propio botón
 
