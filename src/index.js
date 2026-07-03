@@ -44,6 +44,7 @@ const I18N = {
       'Si esta herramienta te resulta útil, puedes dar una pequeña contribución. Las apps del ecosistema Dotrino son gratuitas y autohosteadas. ¡Gracias!',
     close: 'Cerrar',
     defaultLink: 'Donar',
+    contact: 'Contacto',
     hint: 'Donar/Compartir',
     shareHeading: 'Compartir',
     shareText: '¡Mira esto!',
@@ -64,6 +65,7 @@ const I18N = {
       'If you find this tool useful, you can make a small contribution. The Dotrino ecosystem apps are free and self-hosted. Thank you!',
     close: 'Close',
     defaultLink: 'Donate',
+    contact: 'Contact',
     hint: 'Donate/Share',
     shareHeading: 'Share',
     shareText: 'Check this out!',
@@ -340,6 +342,19 @@ const STYLE = `
   .link-ico { display: inline-flex; width: 1.4rem; height: 1.4rem; }
   .link-ico img { width: 100%; height: 100%; display: block; object-fit: contain; }
 
+  /* Botón de Contacto (opt-in), arriba de las donaciones. Contorno para
+     diferenciarlo del botón lleno de "Donar". */
+  .contact-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 220px; margin: 0 auto 0.9rem; padding: 0.7rem 1.4rem;
+    font-family: inherit; font-weight: 600; font-size: 0.95rem;
+    border-radius: 50px; cursor: pointer;
+    background: transparent; color: var(--ds-accent, #3498db);
+    border: 1.5px solid var(--ds-accent, #3498db);
+    transition: all 0.25s ease;
+  }
+  .contact-cta:hover { background: var(--ds-accent, #3498db); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3); }
+
   /* Sección de compartir */
   .share {
     margin-top: 1.5rem;
@@ -477,7 +492,7 @@ function recordAppOpen(appId) {
 
 class DotrinoSupport extends HTMLElement {
   static get observedAttributes() {
-    return ['href', 'links', 'cta', 'no-trigger', 'heading', 'message', 'lang', 'variant', 'inline', 'hint', 'coin', 'no-bubble', 'bubble-timeout', 'share-url', 'share-text', 'no-share', 'repo', 'bug-href', 'discord', 'app', 'no-count']
+    return ['href', 'links', 'cta', 'no-trigger', 'heading', 'message', 'lang', 'variant', 'inline', 'hint', 'coin', 'no-bubble', 'bubble-timeout', 'share-url', 'share-text', 'no-share', 'repo', 'bug-href', 'discord', 'app', 'no-count', 'contact', 'contact-label']
   }
 
   constructor() {
@@ -731,6 +746,15 @@ class DotrinoSupport extends HTMLElement {
       )
       .join('')
 
+    // Botón de Contacto (opt-in con el atributo `contact`), ARRIBA de las
+    // donaciones. No abre un enlace: dispara `cc-support-contact` (la app decide
+    // qué hacer, p. ej. abrir su formulario) y cierra el modal.
+    const wantsContact = this.hasAttribute('contact')
+    const contactLabel = this.getAttribute('contact-label') || t.contact
+    const contactHtml = wantsContact
+      ? `<button type="button" class="contact-cta" part="contact">${escapeHtml(contactLabel)}</button>`
+      : ''
+
     const wantsShare = !this.hasAttribute('no-share')
     const shareHtml = wantsShare
       ? `<div class="share" part="share">
@@ -771,6 +795,7 @@ class DotrinoSupport extends HTMLElement {
           <button type="button" class="close" aria-label="${escapeAttr(t.close)}">&times;</button>
           <h2 class="heading">${escapeHtml(heading)}</h2>
           <p class="message">${escapeHtml(message)}</p>
+          ${contactHtml}
           <div class="links">${linksHtml}</div>
           ${shareHtml}
           ${discordHtml}
@@ -791,6 +816,15 @@ class DotrinoSupport extends HTMLElement {
       this.dispatchEvent(new CustomEvent('cc-support-close', { bubbles: true, composed: true })),
     )
     this.shadowRoot.querySelector('.close').addEventListener('click', () => this.close())
+
+    // Botón de Contacto: cierra el modal y avisa a la app (que abre su formulario).
+    const contactBtn = this.shadowRoot.querySelector('.contact-cta')
+    if (contactBtn) {
+      contactBtn.addEventListener('click', () => {
+        this.close()
+        this.dispatchEvent(new CustomEvent('cc-support-contact', { bubbles: true, composed: true }))
+      })
+    }
 
     // Compartir: el botón sin href (Instagram) copia el enlace al portapapeles.
     this.shadowRoot.querySelectorAll('.share-btn[data-share]').forEach((btn) => {
