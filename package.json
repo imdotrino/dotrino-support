@@ -1,6 +1,6 @@
 {
   "name": "@dotrino/support",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Web Component (custom element) de modal de soporte/donaciones reutilizable por cualquier app del ecosistema Dotrino. Autohosteado, sin JS de terceros ni cookies.",
   "type": "module",
   "main": "src/index.js",
@@ -29,7 +29,7 @@
   "author": "seyacat",
   "license": "MIT",
   "dependencies": {
-    "@dotrino/store": "0.4.0"
+    "@dotrino/store": "0.7.0"
   },
   "repository": {
     "type": "git",
