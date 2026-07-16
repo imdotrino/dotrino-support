@@ -34,7 +34,7 @@
  *   Eventos:    'cc-support-open', 'cc-support-close' (bubbles, composed)
  */
 
-import { COIN_DATA_URI } from './coin.js'
+import { COIN_URL } from './coin.js'
 
 const I18N = {
   es: {
@@ -707,7 +707,7 @@ class DotrinoSupport extends HTMLElement {
     const cta = this.getAttribute('cta') || t.cta
     const variant = this.getAttribute('variant') === 'ghost' ? 'ghost' : 'solid'
     const hint = this.getAttribute('hint') || t.hint
-    const coinSrc = this.getAttribute('coin') || COIN_DATA_URI
+    const coinSrc = this.getAttribute('coin') || COIN_URL
     const inline = this.hasAttribute('inline')
     const hasTrigger = !this.hasAttribute('no-trigger')
     const links = this._links
