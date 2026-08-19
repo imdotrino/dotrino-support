@@ -21,7 +21,11 @@ const server = createServer(async (req, res) => {
   }
   try {
     const body = await readFile(pkgRoot + req.url.replace(/^\//, ''))
-    res.setHeader('content-type', req.url.endsWith('.js') ? 'text/javascript' : 'application/octet-stream')
+    const tipo = req.url.endsWith('.js') ? 'text/javascript'
+      : req.url.endsWith('.png') ? 'image/png'
+      : req.url.endsWith('.svg') ? 'image/svg+xml'
+      : 'application/octet-stream'
+    res.setHeader('content-type', tipo)
     res.end(body)
   } catch {
     res.statusCode = 404
@@ -114,9 +118,21 @@ results.bubbleOnHover = await page.evaluate(async () => {
 results.coinNoTitle = await page.evaluate(
   () => !document.querySelector('#coin').shadowRoot.querySelector('.trigger.coin').getAttribute('title'),
 )
-results.coinHasImage = await page.evaluate(
-  () => (document.querySelector('#coin').shadowRoot.querySelector('.trigger.coin img').getAttribute('src') || '').startsWith('data:image/png;base64,'),
+// La moneda es un ASSET, no un data-URI. Cambio de 0.8.0 y es el motivo del
+// paquete: viajaba embebida en base64 (75,6 KB gzip, el 83 % del bundle del
+// topbar) y ni `no-support` evitaba bajarla. Este test afirmaba lo contrario
+// —que empezara por `data:image/png;base64,`— y llevaba en rojo desde entonces
+// sin que nadie lo viera, porque el package.json no tenia script `test`.
+results.coinNoEsDataUri = await page.evaluate(
+  () => !(document.querySelector('#coin').shadowRoot.querySelector('.trigger.coin img').getAttribute('src') || '').startsWith('data:'),
 )
+// Y que el asset CARGUE de verdad: si la ruta se rompiera, el src seguiria
+// estando y solo esto lo notaria.
+results.coinCarga = await page.evaluate(async () => {
+  const img = document.querySelector('#coin').shadowRoot.querySelector('.trigger.coin img')
+  if (!img.complete) await new Promise((r) => { img.onload = r; img.onerror = r })
+  return img.naturalWidth > 0 && img.naturalHeight > 0
+})
 
 // 7. burbuja "Apoya el Proyecto": existe, aparece sola y luego se oculta al abrir
 results.bubbleText = await page.evaluate(
@@ -239,7 +255,8 @@ const expect = {
   bubbleAnchored: true,
   bubbleOnHover: true,
   coinNoTitle: true,
-  coinHasImage: true,
+  coinNoEsDataUri: true,
+  coinCarga: true,
   bubbleText: 'Donar/Compartir',
   bubbleAutoShown: true,
   bubbleHidesOnOpen: true,

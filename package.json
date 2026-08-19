@@ -40,6 +40,7 @@
     "@types/node": "^22.0.0"
   },
   "scripts": {
+    "test": "node test/smoke.mjs",
     "type-check": "tsc --noEmit"
   }
 }
