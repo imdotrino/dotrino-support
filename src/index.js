@@ -476,7 +476,12 @@ const _openRecorded = new Set()
 // así que caemos al mismo paquete servido por jsDelivr. En apps con bundler el
 // primer import resuelve y nunca se usa el fallback (@vite-ignore evita que el
 // bundler intente analizar la URL).
-const _STORE_CDN = 'https://cdn.jsdelivr.net/npm/@dotrino/store@0.4/src/index.js'
+//
+// Iba pineado a `@0.4`, y ese número no lo miraba nadie: el store publicado ya va por
+// 0.8 y la 0.7.0 está declarada ROTA en el roadmap (soltar la bóveda borraba los hilos
+// del perfil, y desde 0.6.0 dejó de adoptar lo guardado antes de IndexedDB). Se sube
+// junto con el rango del peer, porque son la misma decisión por dos caminos.
+const _STORE_CDN = 'https://cdn.jsdelivr.net/npm/@dotrino/store@0.8/src/index.js'
 async function _loadStore() {
   try { return await import('@dotrino/store') }
   catch { return await import(/* @vite-ignore */ _STORE_CDN) }

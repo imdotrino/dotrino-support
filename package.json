@@ -1,6 +1,6 @@
 {
   "name": "@dotrino/support",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Web Component (custom element) de modal de soporte/donaciones reutilizable por cualquier app del ecosistema Dotrino. Autohosteado, sin JS de terceros ni cookies.",
   "type": "module",
   "main": "src/index.js",
@@ -28,9 +28,6 @@
   ],
   "author": "seyacat",
   "license": "MIT",
-  "dependencies": {
-    "@dotrino/store": "0.7.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imdotrino/dotrino-support.git"
@@ -42,5 +39,13 @@
   "scripts": {
     "test": "node test/smoke.mjs",
     "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@dotrino/store": ">=0.8.0"
+  },
+  "peerDependenciesMeta": {
+    "@dotrino/store": {
+      "optional": true
+    }
   }
 }
