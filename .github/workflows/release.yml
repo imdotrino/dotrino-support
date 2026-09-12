@@ -38,6 +38,11 @@ jobs:
       - run: npm i -g npm@latest
       - run: npm ci
 
+      # El navegador que usa la prueba de humo. `npm ci` trae el paquete, no el binario:
+      # sin esto la suite falla con «Executable doesn't exist», que parece un fallo del
+      # código y es una máquina sin Chromium.
+      - run: npx playwright install --with-deps chromium
+
       # LAS PRUEBAS ANTES DE PUBLICAR. Una versión que no pasa su suite no llega a npm.
       - run: npm test
 

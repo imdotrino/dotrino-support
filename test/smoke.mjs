@@ -1,4 +1,8 @@
-import { chromium } from '../../dotrino-store/node_modules/playwright/index.mjs'
+// Playwright por su NOMBRE, no por una ruta hermana del disco de quien la escribió.
+// Iba a `../../dotrino-store/node_modules/...`, que existe en una copia completa del
+// ecosistema y en ningún otro sitio: en CI reventaba con ERR_MODULE_NOT_FOUND, así que
+// esta prueba nunca llegó a correr allí y la release del 0.9.0 se cayó con ella.
+import { chromium } from 'playwright'
 import { fileURLToPath } from 'node:url'
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
