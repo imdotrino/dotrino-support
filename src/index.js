@@ -41,7 +41,7 @@ const I18N = {
     cta: 'Apoyar',
     heading: 'Apoya al proyecto',
     message:
-      'Si esta herramienta te resulta útil, puedes dar una pequeña contribución. Las apps del ecosistema Dotrino son gratuitas y autohosteadas. ¡Gracias!',
+      'Si esta herramienta te resulta útil, puedes dar una pequeña contribución. Las apps del ecosistema Dotrino son gratuitas y guardan lo tuyo bajo tu control. ¡Gracias!',
     close: 'Cerrar',
     defaultLink: 'Donar',
     contact: 'Contacto',
@@ -62,7 +62,7 @@ const I18N = {
     cta: 'Support',
     heading: 'Support the project',
     message:
-      'If you find this tool useful, you can make a small contribution. The Dotrino ecosystem apps are free and self-hosted. Thank you!',
+      'If you find this tool useful, you can make a small contribution. The Dotrino ecosystem apps are free and keep your stuff under your control. Thank you!',
     close: 'Close',
     defaultLink: 'Donate',
     contact: 'Contact',
