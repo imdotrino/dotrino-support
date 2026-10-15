@@ -46,7 +46,7 @@ El texto de la moneda y la burbuja es **bilingüe es/en** automático (detecta
 **Dentro de la app iOS de Dotrino no hay donaciones** (≥ 0.9.2). Si la página corre en su
 WebView (`window.DotrinoNative.platform()` vale `'ios'`), el modal no enseña enlaces de
 donación y el texto invita a compartir. App Review solo acepta donaciones fuera de In-App
-Purchase para ONG aprobadas (3.1.1 / 3.2.2). `noDonations()` se exporta para quien lo necesite.
+Purchase para ONG aprobadas (3.1.1 / 3.2.2). `noDonations()` se exporta, y sin DOM desde `@dotrino/support/policy` (se puede importar en Node).
 
 ## Instalación
 
