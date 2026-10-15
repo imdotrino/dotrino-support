@@ -240,6 +240,26 @@ results.noDiscordWhenUnset = await page.evaluate(
   () => !document.querySelector('#coin').shadowRoot.querySelector('.discord-link'),
 )
 
+// 12. dentro de la app iOS (window.DotrinoNative.platform() === 'ios'): sin donaciones
+{
+  const ios = await browser.newPage()
+  await ios.addInitScript(() => { window.DotrinoNative = { platform: () => 'ios' } })
+  await ios.goto(baseUrl)
+  await ios.waitForFunction(() => customElements.get('dotrino-support'))
+  Object.assign(results, await ios.evaluate(() => {
+    const el = document.querySelector('#coin')
+    el.open()
+    const r = el.shadowRoot
+    return {
+      iosNoLinks: r.querySelectorAll('.link').length,
+      iosMessage: r.querySelector('.modal').textContent.includes('compártela'),
+      iosHint: r.querySelector('.bubble')?.textContent.trim(),
+      iosNoKofi: !r.innerHTML.includes('ko-fi'),
+    }
+  }))
+  await ios.close()
+}
+
 await browser.close()
 server.close()
 
@@ -280,6 +300,10 @@ const expect = {
   discordHref: 'https://discord.gg/D648uq7cth',
   discordLabel: 'Canal de Soporte',
   noDiscordWhenUnset: true,
+  iosNoLinks: 0,
+  iosMessage: true,
+  iosHint: 'Compartir',
+  iosNoKofi: true,
 }
 
 let ok = true

@@ -42,6 +42,10 @@ const I18N = {
     heading: 'Apoya al proyecto',
     message:
       'Si esta herramienta te resulta útil, puedes dar una pequeña contribución. Las apps del ecosistema Dotrino son gratuitas y guardan lo tuyo bajo tu control. ¡Gracias!',
+    // Dentro de la app iOS (sin enlaces de donación, ver noDonations()).
+    messageNoDonate:
+      'Si esta herramienta te resulta útil, compártela o cuéntanos qué mejorar. Las apps del ecosistema Dotrino son gratuitas. ¡Gracias!',
+    hintNoDonate: 'Compartir',
     close: 'Cerrar',
     defaultLink: 'Donar',
     contact: 'Contacto',
@@ -63,6 +67,9 @@ const I18N = {
     heading: 'Support the project',
     message:
       'If you find this tool useful, you can make a small contribution. The Dotrino ecosystem apps are free and keep your stuff under your control. Thank you!',
+    messageNoDonate:
+      'If you find this tool useful, share it or tell us what to improve. The Dotrino ecosystem apps are free. Thank you!',
+    hintNoDonate: 'Share',
     close: 'Close',
     defaultLink: 'Donate',
     contact: 'Contact',
@@ -495,6 +502,18 @@ function recordAppOpen(appId) {
     .catch(() => { /* store no disponible (offline, bloqueado…): best-effort */ })
 }
 
+// Inside the iOS Dotrino app (its WebView sets `window.DotrinoNative.platform()` to 'ios') there
+// are no donation links: outside In-App Purchase, App Review only accepts donations to approved
+// nonprofits (guidelines 3.1.1 / 3.2.2), and it rejected the app for it on 2026-10-15.
+export function noDonations() {
+  try {
+    const n = typeof window !== 'undefined' ? window.DotrinoNative : null
+    return !!(n && typeof n.platform === 'function' && n.platform() === 'ios')
+  } catch {
+    return false
+  }
+}
+
 class DotrinoSupport extends HTMLElement {
   static get observedAttributes() {
     return ['href', 'links', 'cta', 'no-trigger', 'heading', 'message', 'lang', 'variant', 'inline', 'hint', 'coin', 'no-bubble', 'bubble-timeout', 'share-url', 'share-text', 'no-share', 'repo', 'bug-href', 'discord', 'app', 'no-count', 'contact', 'contact-label']
@@ -548,6 +567,7 @@ class DotrinoSupport extends HTMLElement {
 
   /* ---- enlaces ---- */
   get _links() {
+    if (noDonations()) return []
     const raw = this.getAttribute('links')
     if (raw) {
       try {
@@ -708,10 +728,10 @@ class DotrinoSupport extends HTMLElement {
   _render() {
     const t = this._t
     const heading = this.getAttribute('heading') || t.heading
-    const message = this.getAttribute('message') || t.message
+    const message = noDonations() ? t.messageNoDonate : this.getAttribute('message') || t.message
     const cta = this.getAttribute('cta') || t.cta
     const variant = this.getAttribute('variant') === 'ghost' ? 'ghost' : 'solid'
-    const hint = this.getAttribute('hint') || t.hint
+    const hint = noDonations() ? t.hintNoDonate : this.getAttribute('hint') || t.hint
     const coinSrc = this.getAttribute('coin') || COIN_URL
     const inline = this.hasAttribute('inline')
     const hasTrigger = !this.hasAttribute('no-trigger')
