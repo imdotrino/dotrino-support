@@ -1,6 +1,6 @@
 {
   "name": "@dotrino/support",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Web Component (custom element) de modal de soporte/donaciones reutilizable por cualquier app del ecosistema Dotrino. Autohosteado, sin JS de terceros ni cookies.",
   "type": "module",
   "main": "src/index.js",
@@ -42,7 +42,7 @@
     "typescript": "5.9.3"
   },
   "scripts": {
-    "test": "node test/smoke.mjs",
+    "test": "node --test test/policy.test.mjs && node test/smoke.mjs",
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
