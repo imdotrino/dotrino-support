@@ -489,10 +489,12 @@ const _openRecorded = new Set()
 // del perfil, y desde 0.6.0 dejó de adoptar lo guardado antes de IndexedDB). Se sube
 // junto con el rango del peer, porque son la misma decisión por dos caminos.
 const _STORE_CDN = 'https://cdn.jsdelivr.net/npm/@dotrino/store@0.8/src/index.js'
+/** @returns {Promise<typeof import('@dotrino/store')>} */
 async function _loadStore() {
   try { return await import('@dotrino/store') }
   catch { return await import(/* @vite-ignore */ _STORE_CDN) }
 }
+/** @param {string} appId */
 function recordAppOpen(appId) {
   if (!appId || _openRecorded.has(appId)) return
   _openRecorded.add(appId)
@@ -517,7 +519,12 @@ class DotrinoSupport extends HTMLElement {
     this._onKeydown = this._onKeydown.bind(this)
     this._onBlur = () => this._hideBubble()
     this._onModalBlur = () => this.close()
+    /** @type {ReturnType<typeof setTimeout>[]} */
     this._bubbleTimers = []
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    this._hoverHideTimer = undefined
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    this._copiedTimer = undefined
     this._bubbleAutoShown = false
     this._bubbleVisible = false
   }
@@ -541,7 +548,12 @@ class DotrinoSupport extends HTMLElement {
   }
 
   attributeChangedCallback() {
-    if (this.shadowRoot.childElementCount) this._render()
+    if (this._root.childElementCount) this._render()
+  }
+
+  /** El shadow root: se abre en el constructor, así que siempre está. */
+  get _root() {
+    return /** @type {ShadowRoot} */ (this.shadowRoot)
   }
 
   /* ---- idioma ---- */
@@ -577,6 +589,7 @@ class DotrinoSupport extends HTMLElement {
     return href ? [{ href, label: this._labelFor(href) }] : []
   }
 
+  /** @param {string} href */
   _labelFor(href) {
     try {
       const host = new URL(href).hostname.replace(/^www\./, '')
@@ -628,6 +641,7 @@ class DotrinoSupport extends HTMLElement {
 
   // Construye los enlaces de compartir para cada red. Instagram no admite
   // compartir una URL por web, así que su acción copia el enlace al portapapeles.
+  /** @returns {{ key: 'whatsapp' | 'x' | 'facebook' | 'instagram', href: string | null }[]} */
   _shareTargets() {
     const url = this._shareUrl
     const u = encodeURIComponent(url)
@@ -658,6 +672,7 @@ class DotrinoSupport extends HTMLElement {
     }
   }
 
+  /** @param {string} text @param {() => void} done */
   _copyFallback(text, done) {
     try {
       const ta = document.createElement('textarea')
@@ -675,7 +690,7 @@ class DotrinoSupport extends HTMLElement {
   }
 
   _flashCopied() {
-    const el = this.shadowRoot.querySelector('.share-copied')
+    const el = this._root.querySelector('.share-copied')
     if (!el) return
     el.classList.add('show')
     clearTimeout(this._copiedTimer)
@@ -683,8 +698,10 @@ class DotrinoSupport extends HTMLElement {
   }
 
   /* ---- API pública ---- */
+  /** Abre el modal y emite 'cc-support-open'. */
   open() {
-    const overlay = this.shadowRoot.querySelector('.overlay')
+    /** @type {HTMLDialogElement | null} */
+    const overlay = this._root.querySelector('.overlay')
     if (!overlay) return
     this._bubbleTimers.forEach(clearTimeout)
     this._bubbleTimers = []
@@ -699,8 +716,10 @@ class DotrinoSupport extends HTMLElement {
     this.dispatchEvent(new CustomEvent('cc-support-open', { bubbles: true, composed: true }))
   }
 
+  /** Cierra el modal y emite 'cc-support-close'. */
   close() {
-    const overlay = this.shadowRoot.querySelector('.overlay')
+    /** @type {HTMLDialogElement | null} */
+    const overlay = this._root.querySelector('.overlay')
     if (!overlay) return
     document.removeEventListener('keydown', this._onKeydown)
     window.removeEventListener('blur', this._onModalBlur)
@@ -712,6 +731,7 @@ class DotrinoSupport extends HTMLElement {
     }
   }
 
+  /** @param {KeyboardEvent} e */
   _onKeydown(e) {
     if (e.key === 'Escape') this.close()
   }
@@ -803,7 +823,7 @@ class DotrinoSupport extends HTMLElement {
         </div>`
       : ''
 
-    this.shadowRoot.innerHTML = `
+    this._root.innerHTML = `
       <style>${STYLE}</style>
       ${triggerHtml}
       ${bubbleHtml}
@@ -821,10 +841,10 @@ class DotrinoSupport extends HTMLElement {
       </dialog>
     `
 
-    const trigger = this.shadowRoot.querySelector('.trigger')
+    const trigger = this._root.querySelector('.trigger')
     if (trigger) trigger.addEventListener('click', () => this.open())
 
-    const overlay = this.shadowRoot.querySelector('.overlay')
+    const overlay = /** @type {HTMLDialogElement} */ (this._root.querySelector('.overlay'))  // escrito justo arriba
     // Clic en el backdrop (el propio <dialog>, fuera del .modal) cierra.
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) this.close()
@@ -832,10 +852,11 @@ class DotrinoSupport extends HTMLElement {
     overlay.addEventListener('close', () =>
       this.dispatchEvent(new CustomEvent('cc-support-close', { bubbles: true, composed: true })),
     )
-    this.shadowRoot.querySelector('.close').addEventListener('click', () => this.close())
+    const closeBtn = /** @type {HTMLElement} */ (this._root.querySelector('.close'))
+    closeBtn.addEventListener('click', () => this.close())
 
     // Botón de Contacto: cierra el modal y avisa a la app (que abre su formulario).
-    const contactBtn = this.shadowRoot.querySelector('.contact-cta')
+    const contactBtn = this._root.querySelector('.contact-cta')
     if (contactBtn) {
       contactBtn.addEventListener('click', () => {
         this.close()
@@ -844,13 +865,13 @@ class DotrinoSupport extends HTMLElement {
     }
 
     // Compartir: el botón sin href (Instagram) copia el enlace al portapapeles.
-    this.shadowRoot.querySelectorAll('.share-btn[data-share]').forEach((btn) => {
+    this._root.querySelectorAll('.share-btn[data-share]').forEach((btn) => {
       btn.addEventListener('click', () => this._copyShareUrl())
     })
 
     // Burbuja "Apoya al proyecto": aparece sola al cargar (una vez por carga),
     // y también con hover sobre la moneda. Clic en la burbuja abre el modal.
-    const bubble = this.shadowRoot.querySelector('.bubble')
+    const bubble = this._root.querySelector('.bubble')
     if (bubble) {
       bubble.addEventListener('click', () => this.open())
 
@@ -888,7 +909,7 @@ class DotrinoSupport extends HTMLElement {
 
   _showBubble() {
     this._bubbleVisible = true
-    const bubble = this.shadowRoot.querySelector('.bubble')
+    const bubble = this._root.querySelector('.bubble')
     if (bubble) bubble.classList.add('show')
     // Se va si la ventana/página pierde el foco (blur).
     window.addEventListener('blur', this._onBlur)
@@ -897,14 +918,16 @@ class DotrinoSupport extends HTMLElement {
   _hideBubble() {
     this._bubbleVisible = false
     window.removeEventListener('blur', this._onBlur)
-    const bubble = this.shadowRoot.querySelector('.bubble')
+    const bubble = this._root.querySelector('.bubble')
     if (bubble) bubble.classList.remove('show')
   }
 }
 
+/** @param {unknown} s */
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
+/** @param {unknown} s */
 function escapeAttr(s) {
   return escapeHtml(s).replace(/"/g, '&quot;')
 }

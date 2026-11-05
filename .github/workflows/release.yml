@@ -37,6 +37,8 @@ jobs:
 
       - run: npm i -g npm@latest
       - run: npm ci
+      # Los tipos antes que nada: una versión que no pasa `tsc --noEmit` no llega a npm.
+      - run: npm run type-check
 
       # El navegador que usa la prueba de humo. `npm ci` trae el paquete, no el binario:
       # sin esto la suite falla con «Executable doesn't exist», que parece un fallo del
